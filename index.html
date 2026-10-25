@@ -814,56 +814,6 @@
         }
 
         /**************************************************************
-         * 3. PROCEDURAL HIGH-RES TEST SCENES
-         **************************************************************/
-        function generateTestScenes() {
-            const scenes = [];
-
-            // SCENE 1: Dark PC Case
-            const c1 = document.createElement('canvas');
-            c1.width = 1600; c1.height = 1066;
-            const ctx1 = c1.getContext('2d');
-            const bg1 = ctx1.createLinearGradient(0, 0, 1600, 1066);
-            bg1.addColorStop(0, '#070B14'); bg1.addColorStop(0.5, '#0F172A'); bg1.addColorStop(1, '#050811');
-            ctx1.fillStyle = bg1; ctx1.fillRect(0, 0, 1600, 1066);
-
-            ctx1.fillStyle = '#111827';
-            ctx1.beginPath(); ctx1.roundRect(180, 420, 1050, 280, 20); ctx1.fill();
-            const rgbGrad = ctx1.createLinearGradient(200, 550, 1200, 550);
-            rgbGrad.addColorStop(0, '#E87A24'); rgbGrad.addColorStop(0.5, '#3B82F6'); rgbGrad.addColorStop(1, '#E87A24');
-            ctx1.fillStyle = rgbGrad; ctx1.fillRect(200, 545, 1010, 14);
-
-            ctx1.fillStyle = 'rgba(255,255,255,0.7)';
-            ctx1.font = '600 28px "Kanit", sans-serif';
-            ctx1.fillText('ภาพตัวอย่าง #1: เคสคอมพิวเตอร์โทนมืด (แตะปุ่ม "+ เพิ่มรูป" เพื่อใช้รูปจริง)', 60, 75);
-
-            scenes.push({ id: 'scene-1', title: 'เคสพีซีโทนมืด', canvas: c1, width: 1600, height: 1066 });
-
-            // SCENE 2: PCB
-            const c2 = document.createElement('canvas');
-            c2.width = 1600; c2.height = 1066;
-            const ctx2 = c2.getContext('2d');
-            ctx2.fillStyle = '#052e25'; ctx2.fillRect(0, 0, 1600, 1066);
-            ctx2.fillStyle = '#0F172A'; ctx2.fillRect(580, 310, 420, 420);
-            ctx2.strokeStyle = '#F59E0B'; ctx2.lineWidth = 4; ctx2.strokeRect(580, 310, 420, 420);
-            ctx2.fillStyle = '#E2E8F0'; ctx2.font = '700 34px "JetBrains Mono", monospace';
-            ctx2.textAlign = 'center'; ctx2.fillText('PHUWASIN-MCU-X9', 790, 520);
-            scenes.push({ id: 'scene-2', title: 'แผงวงจร PCB', canvas: c2, width: 1600, height: 1066 });
-
-            // SCENE 3: Service Report
-            const c3 = document.createElement('canvas');
-            c3.width = 1600; c3.height = 1066;
-            const ctx3 = c3.getContext('2d');
-            ctx3.fillStyle = '#F1F5F9'; ctx3.fillRect(0, 0, 1600, 1066);
-            ctx3.fillStyle = '#132A4A'; ctx3.fillRect(80, 80, 1440, 130);
-            ctx3.fillStyle = '#FFFFFF'; ctx3.font = '700 42px "Kanit", sans-serif';
-            ctx3.fillText('ใบรายงานผลการตรวจเช็คและซ่อมบำรุงระบบ (SERVICE REPORT)', 120, 158);
-            scenes.push({ id: 'scene-3', title: 'ใบเสนอราคาสว่าง', canvas: c3, width: 1600, height: 1066 });
-
-            return scenes;
-        }
-
-        /**************************************************************
          * 4. CORE COMPOSITING & WATERMARK RENDERING ENGINE
          **************************************************************/
         function renderWatermarkOntoCanvas(targetCanvas, sourceImgOrCanvas, isPreview = false) {
@@ -1513,7 +1463,7 @@
         }
 
         window.onload = async function () {
-            state.queue = generateTestScenes();
+            state.queue = [];
             state.activeQueueIndex = 0;
             renderFilmstrip();
             await loadDefaultOrExternalLogo();
