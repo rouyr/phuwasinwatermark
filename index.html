@@ -2,7 +2,7 @@
 <html lang="th" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PHUWASIN PRO SERVICE // Watermark Studio</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,7 +39,7 @@
         :root {
             --bg-deep: #080F1E;
             --bg-mid: #0F1E36;
-            --glass-bg: rgba(19, 42, 74, 0.65);
+            --glass-bg: rgba(19, 42, 74, 0.68);
             --glass-border: rgba(255, 255, 255, 0.1);
             --accent-orange: #E87A24;
             --accent-navy: #1E40AF;
@@ -51,6 +51,7 @@
             font-family: 'Kanit', sans-serif;
             overflow-x: hidden;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Glassmorphism & Neumorphism Surfaces */
@@ -63,21 +64,20 @@
         }
 
         .neu-inset {
-            background: rgba(8, 15, 30, 0.75);
+            background: rgba(8, 15, 30, 0.78);
             box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.65), inset -1px -1px 3px rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .neu-btn {
             background: linear-gradient(145deg, rgba(26, 52, 90, 0.85), rgba(14, 29, 52, 0.9));
             border: 1px solid rgba(255, 255, 255, 0.09);
             box-shadow: 4px 4px 10px rgba(4, 9, 18, 0.6), -1px -1px 4px rgba(255, 255, 255, 0.05);
-            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .neu-btn:hover {
-            border-color: rgba(232, 122, 36, 0.5);
-            transform: translateY(-1px);
+        .neu-btn:active {
+            transform: scale(0.97);
         }
 
         .neu-btn.active {
@@ -95,37 +95,46 @@
                 linear-gradient(-45deg, #0f172a 25%, transparent 25%), 
                 linear-gradient(45deg, transparent 75%, #0f172a 75%), 
                 linear-gradient(-45deg, transparent 75%, #0f172a 75%);
-            background-size: 16px 16px;
-            background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+            background-size: 14px 14px;
+            background-position: 0 0, 0 7px, 7px -7px, -7px 0;
         }
 
-        /* Custom Range Sliders */
+        /* Touch-Safe Range Sliders */
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
             height: 6px;
-            background: rgba(8, 15, 30, 0.85);
+            background: rgba(8, 15, 30, 0.9);
             border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             outline: none;
+            touch-action: pan-y; /* Allows vertical scroll when swiping across track */
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: linear-gradient(135deg, #F59E0B, #E87A24);
             cursor: pointer;
             border: 2px solid #FFFFFF;
             box-shadow: 0 0 10px rgba(232, 122, 36, 0.65);
-            transition: transform 0.15s ease;
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
+        /* Safe Scroll Lane Pattern on Mobile */
+        .scroll-lane-grip {
+            background-image: radial-gradient(rgba(232, 122, 36, 0.45) 1.5px, transparent 1.5px);
+            background-size: 8px 8px;
+        }
+
+        /* Locked Controls State */
+        .controls-locked {
+            pointer-events: none;
+            opacity: 0.45;
+            filter: grayscale(40%);
         }
 
         /* Custom Scrollbar */
@@ -140,86 +149,61 @@
             background: rgba(232, 122, 36, 0.45);
             border-radius: 999px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(232, 122, 36, 0.8);
-        }
 
-        /* Canvas Drag Cursor */
         #previewCanvas {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
             border-radius: 8px;
-            transition: box-shadow 0.2s ease;
+            touch-action: pan-y; /* Crucial: allow vertical page scroll over canvas by default */
         }
     </style>
 </head>
-<body class="min-h-screen lg:h-screen flex flex-col overflow-y-auto lg:overflow-hidden">
+<body class="min-h-screen lg:h-screen flex flex-col overflow-y-auto lg:overflow-hidden pb-8 lg:pb-0">
 
     <!-- ==================== TOP STUDIO HEADER ==================== -->
-    <header class="glass-panel z-30 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 shrink-0">
+    <header class="glass-panel z-30 px-3 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-2.5 border-b border-white/10 shrink-0 sticky top-0 lg:static">
         <!-- Brand Identity -->
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#132A4A] to-[#080F1E] border border-[#E87A24]/50 flex items-center justify-center shadow-lg relative overflow-hidden">
-                <span class="font-extrabold text-lg tracking-tighter">
+        <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#132A4A] to-[#080F1E] border border-[#E87A24]/50 flex items-center justify-center shadow-lg relative overflow-hidden shrink-0">
+                <span class="font-extrabold text-base sm:text-lg tracking-tighter">
                     <span class="text-blue-400">P</span><span class="text-[#E87A24]">S</span>
                 </span>
                 <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-[#E87A24] rounded-full blur-[4px]"></div>
             </div>
             <div>
                 <div class="flex items-center gap-2">
-                    <h1 class="font-bold text-sm sm:text-base tracking-wide text-white">
-                        PHUWASIN PRO SERVICE <span class="text-[#E87A24] font-mono text-xs sm:text-sm">// WATERMARK STUDIO</span>
+                    <h1 class="font-bold text-xs sm:text-base tracking-wide text-white">
+                        PHUWASIN PRO SERVICE <span class="text-[#E87A24] font-mono text-[11px] sm:text-sm">// STUDIO</span>
                     </h1>
-                    <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                        ● CLIENT-SIDE 100%
-                    </span>
                 </div>
-                <p class="text-xs text-slate-400">ระบบประมวลผลลายน้ำความละเอียดสูงสำหรับงานช่าง ฮาร์ดแวร์ และบริการทางเทคนิค</p>
+                <p class="text-[11px] text-slate-400 hidden sm:block">ระบบใส่ลายน้ำความละเอียดสูงสำหรับงานช่างและฮาร์ดแวร์</p>
             </div>
         </div>
 
-        <!-- Quick Test Scene Switcher (Middle) -->
-        <div class="hidden xl:flex items-center gap-1.5 neu-inset px-2 py-1 rounded-xl">
-            <span class="text-[11px] text-slate-400 px-2 font-medium">ภาพทดสอบด่วน:</span>
-            <button onclick="selectSceneByIndex(0)" id="quickScene0" class="px-2.5 py-1 rounded-lg text-xs font-medium transition-all bg-[#E87A24] text-white">
-                1. เคสพีซีโทนมืด
-            </button>
-            <button onclick="selectSceneByIndex(1)" id="quickScene1" class="px-2.5 py-1 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white">
-                2. แผงวงจร PCB
-            </button>
-            <button onclick="selectSceneByIndex(2)" id="quickScene2" class="px-2.5 py-1 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white">
-                3. ใบเสนอราคาสว่าง
-            </button>
-        </div>
-
         <!-- Export Controls (Right) -->
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <!-- Format Selector -->
-            <div class="neu-inset rounded-xl px-2.5 py-1.5 flex items-center gap-1.5">
-                <label for="exportFormat" class="text-[11px] text-slate-400">ฟอร์แมต:</label>
-                <select id="exportFormat" class="bg-transparent text-xs font-mono text-amber-300 focus:outline-none cursor-pointer">
-                    <option value="image/jpeg|0.92" class="bg-[#0F1E36] text-white">JPEG (92%)</option>
-                    <option value="image/png|1.0" class="bg-[#0F1E36] text-white">PNG (Lossless)</option>
-                    <option value="image/webp|0.90" class="bg-[#0F1E36] text-white">WebP (90%)</option>
+            <div class="neu-inset rounded-xl px-2 py-1.5 flex items-center gap-1">
+                <select id="exportFormat" class="bg-transparent text-[11px] sm:text-xs font-mono text-amber-300 focus:outline-none cursor-pointer">
+                    <option value="image/jpeg|0.92" class="bg-[#0F1E36] text-white">JPG 92%</option>
+                    <option value="image/png|1.0" class="bg-[#0F1E36] text-white">PNG 100%</option>
+                    <option value="image/webp|0.90" class="bg-[#0F1E36] text-white">WebP 90%</option>
                 </select>
             </div>
 
             <!-- Download Current Photo -->
-            <button onclick="exportCurrentImage()" class="neu-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-white flex items-center gap-1.5 border border-white/15 hover:border-[#E87A24]">
-                <svg class="w-4 h-4 text-[#E87A24]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="exportCurrentImage()" class="neu-btn px-3 py-2 rounded-xl text-xs font-semibold text-white flex items-center gap-1.5 border border-white/15">
+                <svg class="w-4 h-4 text-[#E87A24] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
-                <span>ดาวน์โหลดภาพนี้</span>
+                <span>บันทึกภาพนี้</span>
             </button>
 
             <!-- Batch Export All -->
-            <button onclick="exportBatchAll()" id="batchExportBtn" class="px-4 py-2 rounded-xl text-xs font-semibold text-white flex items-center gap-1.5 bg-gradient-to-r from-[#E87A24] to-[#D95B00] hover:from-[#F59E0B] hover:to-[#E87A24] shadow-lg shadow-[#E87A24]/25 transition-all active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                </svg>
-                <span>ดาวน์โหลดทั้งหมดในคิว (<span id="batchCountBadge">3</span>)</span>
+            <button onclick="exportBatchAll()" id="batchExportBtn" class="px-3 py-2 rounded-xl text-xs font-semibold text-white flex items-center gap-1 bg-gradient-to-r from-[#E87A24] to-[#D95B00] shadow-lg shadow-[#E87A24]/25 active:scale-95">
+                <span>ทั้งหมด (<span id="batchCountBadge">3</span>)</span>
             </button>
         </div>
     </header>
@@ -228,317 +212,352 @@
     <main class="flex-1 flex flex-col lg:flex-row overflow-visible lg:overflow-hidden relative">
 
         <!-- LEFT / CENTER AREA: INTERACTIVE CANVAS + BATCH FILMSTRIP -->
-        <section class="flex-1 flex flex-col min-w-0 p-3 sm:p-4 gap-3 relative overflow-hidden">
+        <section class="flex-1 flex flex-col min-w-0 p-2.5 sm:p-4 gap-2.5 relative overflow-hidden">
             
-            <!-- Top Canvas Info Bar -->
-            <div class="glass-panel rounded-xl px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div class="flex items-center gap-3 flex-wrap">
-                    <span class="inline-flex items-center gap-1.5 font-medium text-white">
-                        <span class="w-2 h-2 rounded-full bg-[#E87A24] animate-pulse"></span>
-                        <span id="currentSceneTitle">เคสพีซีโทนมืด (ทดสอบคอนทราสต์)</span>
+            <!-- Top Canvas Info & Touch Mode Bar -->
+            <div class="glass-panel rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="inline-flex items-center gap-1.5 font-medium text-white text-xs">
+                        <span class="w-2 h-2 rounded-full bg-[#E87A24]"></span>
+                        <span id="currentSceneTitle" class="truncate max-w-[160px] sm:max-w-xs">เคสพีซีโทนมืด</span>
                     </span>
-                    <span id="canvasResolutionBadge" class="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800/90 text-sky-300 border border-sky-500/20">
-                        1600 × 1066 px
-                    </span>
-                    <span id="dragCoordBadge" class="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800/90 text-amber-300 border border-amber-500/20">
-                        พิกัด: มุมขวาล่าง (88%, 86%)
+                    <span id="canvasResolutionBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-800/90 text-sky-300 border border-sky-500/20">
+                        1600×1066
                     </span>
                 </div>
 
+                <!-- Canvas Drag Lock Toggle + Upload Button -->
                 <div class="flex items-center gap-2">
-                    <span class="text-[11px] text-slate-300 hidden sm:inline">
-                        💡 คลิกค้างบนภาพเพื่อลากขยับโลโก้ได้อย่างอิสระ
-                    </span>
-                    <label for="photoUploadInput" class="cursor-pointer px-2.5 py-1 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/30 text-blue-200 text-xs font-medium flex items-center gap-1 transition-all">
+                    <button id="canvasDragToggleBtn" onclick="toggleCanvasDragMode()" class="px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all flex items-center gap-1 bg-emerald-500/20 border-emerald-400/40 text-emerald-200">
+                        <span id="canvasDragIcon">✋</span>
+                        <span id="canvasDragLabel">แตะตัวโลโก้เพื่อลาก</span>
+                    </button>
+
+                    <label for="photoUploadInput" class="cursor-pointer px-2.5 py-1 rounded-lg bg-[#E87A24] hover:bg-[#F59E0B] text-white text-xs font-semibold flex items-center gap-1 shadow">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        <span>เพิ่มรูปหน้างาน</span>
+                        <span>เพิ่มรูป</span>
                     </label>
                     <input id="photoUploadInput" type="file" accept="image/*" multiple class="hidden">
                 </div>
             </div>
 
             <!-- Interactive Canvas Viewport -->
-            <div id="canvasDropZone" class="flex-1 neu-inset rounded-2xl relative flex items-center justify-center p-3 sm:p-6 overflow-hidden min-h-[320px] sm:min-h-[420px] group">
+            <div id="canvasDropZone" class="flex-1 neu-inset rounded-2xl relative flex items-center justify-center p-2 sm:p-5 overflow-hidden min-h-[260px] sm:min-h-[380px]">
                 
                 <!-- Subtle Grid Background inside Viewport -->
                 <div class="absolute inset-0 opacity-15 pointer-events-none" 
                      style="background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 20px 20px;"></div>
 
                 <!-- Main Interactive Preview Canvas -->
-                <canvas id="previewCanvas" class="cursor-move z-10"></canvas>
+                <canvas id="previewCanvas" class="z-10"></canvas>
 
-                <!-- Drag & Drop Overlay (Shown when dragging files over viewport) -->
-                <div id="dropZoneOverlay" class="absolute inset-2 rounded-2xl bg-[#0F1E36]/90 border-2 border-dashed border-[#E87A24] z-30 hidden flex-col items-center justify-center gap-3 pointer-events-none">
-                    <div class="w-16 h-16 rounded-2xl bg-[#E87A24]/20 flex items-center justify-center text-[#E87A24]">
-                        <svg class="w-10 h-10 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                        </svg>
-                    </div>
-                    <p class="text-lg font-bold text-white">ปล่อยไฟล์รูปภาพเพื่อนำเข้าคิวงาน</p>
-                    <p class="text-xs text-slate-300">รองรับไฟล์ JPEG, PNG, WebP (อัปโหลดพร้อมกันได้หลายรูป)</p>
+                <!-- Drag & Drop Overlay -->
+                <div id="dropZoneOverlay" class="absolute inset-2 rounded-2xl bg-[#0F1E36]/90 border-2 border-dashed border-[#E87A24] z-30 hidden flex-col items-center justify-center gap-2 pointer-events-none">
+                    <p class="text-base font-bold text-white">ปล่อยไฟล์รูปภาพเพื่อนำเข้าคิวงาน</p>
                 </div>
             </div>
 
             <!-- Bottom Batch Queue Filmstrip -->
-            <div class="glass-panel rounded-2xl p-2.5 flex items-center gap-3 shrink-0">
+            <div class="glass-panel rounded-2xl p-2 flex items-center gap-2.5 shrink-0">
                 <div class="flex flex-col justify-center px-2 border-r border-white/10 shrink-0">
-                    <span class="text-xs font-bold text-white flex items-center gap-1.5">
-                        <svg class="w-4 h-4 text-[#E87A24]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                        </svg>
-                        คิวรูปภาพ (<span id="queueTotalLabel">3</span>)
+                    <span class="text-[11px] font-bold text-white">
+                        คิวรูป (<span id="queueTotalLabel">3</span>)
                     </span>
-                    <span class="text-[10px] text-slate-400">คลิกเลือกรูปเพื่อพรีวิว</span>
+                    <span class="text-[9px] text-slate-400">แตะเลือกรูป</span>
                 </div>
 
                 <!-- Filmstrip Thumbnails Container -->
-                <div id="batchFilmstrip" class="flex-1 flex items-center gap-2.5 overflow-x-auto py-1 px-1">
+                <div id="batchFilmstrip" class="flex-1 flex items-center gap-2 overflow-x-auto py-1 px-1">
                     <!-- Populated dynamically by JS -->
                 </div>
 
                 <!-- Add More Photos Tile -->
-                <label for="photoUploadInput" class="shrink-0 w-24 h-16 rounded-xl border border-dashed border-slate-500/60 hover:border-[#E87A24] bg-slate-900/40 hover:bg-slate-800/60 flex flex-col items-center justify-center gap-1 cursor-pointer transition-all text-slate-300 hover:text-white">
-                    <svg class="w-5 h-5 text-[#E87A24]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    <span class="text-[10px] font-medium">+ เพิ่มรูปคิวงาน</span>
+                <label for="photoUploadInput" class="shrink-0 w-20 h-14 rounded-xl border border-dashed border-slate-500/60 hover:border-[#E87A24] bg-slate-900/40 flex flex-col items-center justify-center gap-0.5 cursor-pointer text-slate-300">
+                    <span class="text-base text-[#E87A24] font-bold">+</span>
+                    <span class="text-[10px] font-medium">เพิ่มรูป</span>
                 </label>
             </div>
         </section>
 
-        <!-- RIGHT SIDEBAR: ENGINEERING CONTROL PANEL -->
-        <aside class="w-full lg:w-[410px] xl:w-[440px] glass-panel border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col lg:h-full overflow-y-auto shrink-0 p-4 gap-4">
+        <!-- RIGHT SIDEBAR: TOUCH-SAFE CONTROL PANEL WITH MOBILE SCROLL GUTTER -->
+        <aside class="w-full lg:w-[420px] xl:w-[440px] glass-panel border-t lg:border-t-0 lg:border-l border-white/10 flex flex-row lg:flex-col lg:h-full shrink-0 relative">
 
-            <!-- SECTION 1: LOGO & CHROMA-KEY WHITE REMOVAL -->
-            <div class="neu-inset rounded-2xl p-3.5 space-y-3 border border-white/5">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-[#E87A24] flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                        </svg>
-                        1. โลโก้ & ระบบตัดพื้นหลังสีขาว (Chroma-Key)
-                    </h2>
-                    <button onclick="resetToDefaultLogo()" class="text-[11px] text-sky-400 hover:text-sky-300 underline">
-                        รีเซ็ตค่าเริ่มต้น
+            <!-- MAIN CONTROLS AREA (Left side on mobile, full width on desktop) -->
+            <div class="flex-1 flex flex-col p-3 sm:p-4 gap-3 overflow-y-visible lg:overflow-y-auto min-w-0">
+
+                <!-- Top Control Header: Mode Tabs + Touch Lock Button -->
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                        ⚙️ ตั้งค่าลายน้ำ
+                    </span>
+
+                    <!-- Touch-Lock Button to prevent accidental changes while scrolling -->
+                    <button id="panelLockBtn" onclick="togglePanelTouchLock()" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all flex items-center gap-1 bg-slate-800/90 border-white/15 text-slate-300">
+                        <span id="panelLockIcon">🔓</span>
+                        <span id="panelLockText">ล็อกปุ่มกันนิ้วลั่น: ปิด</span>
                     </button>
                 </div>
 
-                <!-- Live Logo Transparency Preview & Upload Button -->
-                <div class="flex items-center gap-3">
-                    <div class="w-24 h-20 rounded-xl checkerboard border border-white/15 flex items-center justify-center p-1.5 shrink-0 relative overflow-hidden" title="ตัวอย่างโลโก้หลังเจาะพื้นหลังโปร่งใส">
-                        <canvas id="logoMiniPreview" class="max-w-full max-h-full object-contain"></canvas>
-                        <span class="absolute bottom-0.5 right-1 text-[9px] font-mono bg-black/70 text-emerald-300 px-1 rounded">ALPHA</span>
-                    </div>
-
-                    <div class="flex-1 space-y-2">
-                        <label for="logoUploadInput" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-[#1E40AF] to-[#132A4A] hover:from-blue-600 hover:to-blue-800 border border-blue-400/40 text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all">
-                            <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                            </svg>
-                            <span class="truncate">อัปโหลดไฟล์โลโก้ของคุณ (1000008252.jpg)</span>
-                        </label>
-                        <input id="logoUploadInput" type="file" accept="image/*" class="hidden">
-                        <p class="text-[11px] text-slate-400 leading-tight">
-                            รองรับการดึงไฟล์ <span class="text-white font-mono">logo.jpg</span> หรือ <span class="text-white font-mono">1000008252.jpg</span> อัตโนมัติเมื่อนำขึ้นเว็บจริง
-                        </p>
-                    </div>
+                <!-- 3-Tab Navigation Bar (Reduces vertical height so you don't need to scroll!) -->
+                <div class="grid grid-cols-3 gap-1.5 neu-inset p-1 rounded-xl">
+                    <button onclick="switchControlTab('tab-pos')" id="btn-tab-pos" class="tab-nav-btn neu-btn active py-2 px-2 rounded-lg text-xs font-semibold text-center">
+                        📍 1. ตำแหน่ง
+                    </button>
+                    <button onclick="switchControlTab('tab-style')" id="btn-tab-style" class="tab-nav-btn neu-btn py-2 px-2 rounded-lg text-xs font-semibold text-center">
+                        🎨 2. ขนาด/สี
+                    </button>
+                    <button onclick="switchControlTab('tab-stamp')" id="btn-tab-stamp" class="tab-nav-btn neu-btn py-2 px-2 rounded-lg text-xs font-semibold text-center">
+                        🏷️ 3. ป้ายงาน
+                    </button>
                 </div>
 
-                <!-- Auto White-to-Alpha Toggle & Threshold Slider -->
-                <div class="pt-2 border-t border-white/10 space-y-2.5">
-                    <label class="flex items-center justify-between cursor-pointer">
-                        <span class="text-xs font-medium text-slate-200">ระบบตัดพื้นหลังสีขาวอัตโนมัติ (Auto Chroma-Key)</span>
-                        <div class="relative">
-                            <input type="checkbox" id="chromaKeyToggle" checked class="sr-only peer" onchange="updateLogoProcessing()">
-                            <div class="w-10 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#E87A24]"></div>
+                <!-- WRAPPER THAT CAN BE LOCKED BY TOUCH-GUARD -->
+                <div id="lockableControlsContainer" class="space-y-3">
+
+                    <!-- ==================== TAB 1: POSITION & MODE ==================== -->
+                    <div id="tab-pos" class="control-tab-pane neu-inset rounded-2xl p-3.5 space-y-3 border border-white/5">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-[#E87A24]">
+                                โหมดลายน้ำ & จุดวาง 9 ตำแหน่ง
+                            </h2>
+                            <span id="dragCoordBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-slate-800 text-amber-300">
+                                พิกัด: (86%, 84%)
+                            </span>
                         </div>
-                    </label>
 
-                    <div id="chromaThresholdGroup" class="space-y-1">
-                        <div class="flex justify-between text-[11px]">
-                            <span class="text-slate-400">ความเข้มการตัดสีขาว (Threshold)</span>
-                            <span id="chromaThresholdVal" class="font-mono text-amber-400">235 / 255</span>
+                        <!-- Mode Selector -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="modeSingleBtn" onclick="setWatermarkMode('single')" class="neu-btn active py-2 px-3 rounded-xl text-xs font-semibold">
+                                📍 แปะจุดเดียว
+                            </button>
+                            <button id="modeTiledBtn" onclick="setWatermarkMode('tiled')" class="neu-btn py-2 px-3 rounded-xl text-xs font-semibold">
+                                🛡️ ปูเต็มภาพกันขโมย
+                            </button>
                         </div>
-                        <input type="range" id="chromaThresholdSlider" min="180" max="252" value="235" oninput="updateLogoProcessing()">
+
+                        <!-- Single Badge Controls: 9-Point Grid -->
+                        <div id="singleModeControls" class="space-y-3 pt-1">
+                            <div class="flex items-center gap-3">
+                                <div class="grid grid-cols-3 gap-1.5 w-28 shrink-0">
+                                    <button onclick="setAnchorPosition('top-left')" data-anchor="top-left" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">↖</button>
+                                    <button onclick="setAnchorPosition('top-center')" data-anchor="top-center" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">↑</button>
+                                    <button onclick="setAnchorPosition('top-right')" data-anchor="top-right" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">↗</button>
+                                    <button onclick="setAnchorPosition('middle-left')" data-anchor="middle-left" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">←</button>
+                                    <button onclick="setAnchorPosition('middle-center')" data-anchor="middle-center" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">·</button>
+                                    <button onclick="setAnchorPosition('middle-right')" data-anchor="middle-right" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">→</button>
+                                    <button onclick="setAnchorPosition('bottom-left')" data-anchor="bottom-left" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">↙</button>
+                                    <button onclick="setAnchorPosition('bottom-center')" data-anchor="bottom-center" class="anchor-btn neu-btn h-9 rounded-lg text-xs font-mono">↓</button>
+                                    <button onclick="setAnchorPosition('bottom-right')" data-anchor="bottom-right" class="anchor-btn neu-btn active h-9 rounded-lg text-xs font-mono">↘</button>
+                                </div>
+
+                                <div class="flex-1 space-y-2">
+                                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                                        กดปุ่มเลือกมุมด่วน หรือ <span class="text-amber-300">แตะที่ตัวโลโก้บนภาพค้างไว้</span> เพื่อลากขยับ
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Margin Slider with Stepper Buttons -->
+                            <div class="pt-1 border-t border-white/10">
+                                <div class="flex justify-between text-[11px] mb-1.5">
+                                    <span class="text-slate-300">ระยะห่างจากขอบภาพ (Margin)</span>
+                                    <span id="marginValLabel" class="font-mono text-amber-400 font-bold">4%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="stepSlider('marginSlider', -0.5, onMarginChange)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold text-slate-200 shrink-0">-</button>
+                                    <input type="range" id="marginSlider" min="0" max="15" step="0.5" value="4" oninput="onMarginChange()">
+                                    <button onclick="stepSlider('marginSlider', 0.5, onMarginChange)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold text-slate-200 shrink-0">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tiled Grid Controls -->
+                        <div id="tiledModeControls" class="hidden space-y-3 pt-1">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-300">องศาการเอียงลายน้ำ (Tile Angle)</span>
+                                    <span id="tileAngleLabel" class="font-mono text-amber-400">-30°</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="stepSlider('tileAngleSlider', -5, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">-</button>
+                                    <input type="range" id="tileAngleSlider" min="-60" max="60" step="5" value="-30" oninput="onSliderUpdate()">
+                                    <button onclick="stepSlider('tileAngleSlider', 5, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">+</button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-1">
+                                    <span class="text-slate-300">ระยะห่างตาราง (Spacing)</span>
+                                    <span id="tileSpacingLabel" class="font-mono text-amber-400">260 px</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="stepSlider('tileSpacingSlider', -20, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">-</button>
+                                    <input type="range" id="tileSpacingSlider" min="120" max="600" step="10" value="260" oninput="onSliderUpdate()">
+                                    <button onclick="stepSlider('tileSpacingSlider', 20, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">+</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- SECTION 2: WATERMARK MODE & 9-POINT ANCHOR -->
-            <div class="neu-inset rounded-2xl p-3.5 space-y-3 border border-white/5">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[#E87A24] flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
-                    </svg>
-                    2. โหมดลายน้ำ & ตำแหน่งการจัดวาง
-                </h2>
+                    <!-- ==================== TAB 2: SCALE, OPACITY & BACKDROP ==================== -->
+                    <div id="tab-style" class="control-tab-pane hidden lg:block neu-inset rounded-2xl p-3.5 space-y-3 border border-white/5">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-[#E87A24]">
+                            ขนาด ความโปร่งแสง & ป้ายรองหลังโลโก้
+                        </h2>
 
-                <!-- Mode Selector -->
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="modeSingleBtn" onclick="setWatermarkMode('single')" class="neu-btn active py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
-                        <span>📍 แปะจุดเดียว (Badge)</span>
-                    </button>
-                    <button id="modeTiledBtn" onclick="setWatermarkMode('tiled')" class="neu-btn py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
-                        <span>🛡️ ปูเต็มภาพกันขโมย</span>
-                    </button>
-                </div>
-
-                <!-- Single Badge Controls: 9-Point Grid -->
-                <div id="singleModeControls" class="flex items-center gap-4 pt-1">
-                    <div class="grid grid-cols-3 gap-1.5 w-28 shrink-0">
-                        <button onclick="setAnchorPosition('top-left')" data-anchor="top-left" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">↖</button>
-                        <button onclick="setAnchorPosition('top-center')" data-anchor="top-center" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">↑</button>
-                        <button onclick="setAnchorPosition('top-right')" data-anchor="top-right" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">↗</button>
-                        <button onclick="setAnchorPosition('middle-left')" data-anchor="middle-left" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">←</button>
-                        <button onclick="setAnchorPosition('middle-center')" data-anchor="middle-center" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">·</button>
-                        <button onclick="setAnchorPosition('middle-right')" data-anchor="middle-right" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">→</button>
-                        <button onclick="setAnchorPosition('bottom-left')" data-anchor="bottom-left" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">↙</button>
-                        <button onclick="setAnchorPosition('bottom-center')" data-anchor="bottom-center" class="anchor-btn neu-btn h-8 rounded-lg text-xs font-mono">↓</button>
-                        <button onclick="setAnchorPosition('bottom-right')" data-anchor="bottom-right" class="anchor-btn neu-btn active h-8 rounded-lg text-xs font-mono">↘</button>
-                    </div>
-
-                    <div class="flex-1 space-y-2">
-                        <p class="text-[11px] text-slate-300 leading-relaxed">
-                            เลือกจุดตัด 9 ตำแหน่งด่วน หรือ <span class="text-amber-300 font-medium">คลิกแล้วลากโลโก้บนภาพพรีวิว</span> เพื่อวางในพิกัดที่ต้องการ
-                        </p>
+                        <!-- Scale Slider with Steppers -->
                         <div>
                             <div class="flex justify-between text-[11px] mb-1">
-                                <span class="text-slate-400">ระยะห่างจากขอบ (Margin)</span>
-                                <span id="marginValLabel" class="font-mono text-amber-400">4%</span>
+                                <span class="text-slate-300">ขนาดโลโก้ (Scale)</span>
+                                <span id="scaleValLabel" class="font-mono text-amber-400 font-bold">22%</span>
                             </div>
-                            <input type="range" id="marginSlider" min="0" max="15" step="0.5" value="4" oninput="onMarginChange()">
+                            <div class="flex items-center gap-2">
+                                <button onclick="stepSlider('scaleSlider', -2, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">-</button>
+                                <input type="range" id="scaleSlider" min="5" max="80" value="22" oninput="onSliderUpdate()">
+                                <button onclick="stepSlider('scaleSlider', 2, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">+</button>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Tiled Grid Controls (Hidden by default) -->
-                <div id="tiledModeControls" class="hidden space-y-2.5 pt-1">
-                    <div>
-                        <div class="flex justify-between text-[11px] mb-1">
-                            <span class="text-slate-400">องศาการเอียงลายน้ำ (Tile Angle)</span>
-                            <span id="tileAngleLabel" class="font-mono text-amber-400">-30°</span>
+                        <!-- Opacity Slider with Steppers -->
+                        <div>
+                            <div class="flex justify-between text-[11px] mb-1">
+                                <span class="text-slate-300">ความโปร่งแสง (Opacity)</span>
+                                <span id="opacityValLabel" class="font-mono text-amber-400 font-bold">92%</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="stepSlider('opacitySlider', -5, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">-</button>
+                                <input type="range" id="opacitySlider" min="10" max="100" value="92" oninput="onSliderUpdate()">
+                                <button onclick="stepSlider('opacitySlider', 5, onSliderUpdate)" class="neu-btn w-8 h-8 rounded-lg font-mono text-sm font-bold shrink-0">+</button>
+                            </div>
                         </div>
-                        <input type="range" id="tileAngleSlider" min="-60" max="60" step="5" value="-30" oninput="onSliderUpdate()">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[11px] mb-1">
-                            <span class="text-slate-400">ระยะห่างระหว่างตาราง (Tile Spacing)</span>
-                            <span id="tileSpacingLabel" class="font-mono text-amber-400">260 px</span>
+
+                        <!-- Adaptive Contrast Backdrop Selector -->
+                        <div class="pt-1 border-t border-white/10 space-y-1.5">
+                            <span class="text-[11px] text-slate-300 font-medium block">พื้นหลังรองรับโลโก้ (กันโลโก้จมในภาพมืด):</span>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="setBackdropStyle('none')" data-backdrop="none" class="backdrop-btn neu-btn py-2 px-2.5 rounded-xl text-xs font-medium">
+                                    ไม่มี (None)
+                                </button>
+                                <button onclick="setBackdropStyle('glass')" data-backdrop="glass" class="backdrop-btn neu-btn active py-2 px-2.5 rounded-xl text-xs font-medium">
+                                    ✨ ป้ายกระจกขาว
+                                </button>
+                                <button onclick="setBackdropStyle('glow')" data-backdrop="glow" class="backdrop-btn neu-btn py-2 px-2.5 rounded-xl text-xs font-medium">
+                                    💡 ขอบเรืองแสงขาว
+                                </button>
+                                <button onclick="setBackdropStyle('dark')" data-backdrop="dark" class="backdrop-btn neu-btn py-2 px-2.5 rounded-xl text-xs font-medium">
+                                    🌑 ป้ายมืดขอบส้ม
+                                </button>
+                            </div>
                         </div>
-                        <input type="range" id="tileSpacingSlider" min="120" max="600" step="10" value="260" oninput="onSliderUpdate()">
                     </div>
+
+                    <!-- ==================== TAB 3: SERVICE STAMP & AUTO-LOGO STATUS ==================== -->
+                    <div id="tab-stamp" class="control-tab-pane hidden lg:block neu-inset rounded-2xl p-3.5 space-y-3 border border-white/5">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-[#E87A24]">
+                            ป้ายกำกับงานซ่อม & สถานะโลโก้หลัก
+                        </h2>
+
+                        <!-- Status Pill Selector -->
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] text-slate-300">ป้ายสถานะหน้างาน (Status Tag):</label>
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button onclick="setServiceStatus('NONE')" data-status="NONE" class="status-btn neu-btn py-2 px-2 rounded-lg text-[11px] font-medium">
+                                    ไม่แสดง
+                                </button>
+                                <button onclick="setServiceStatus('BEFORE')" data-status="BEFORE" class="status-btn neu-btn py-2 px-2 rounded-lg text-[11px] font-medium text-amber-300">
+                                    🔧 BEFORE
+                                </button>
+                                <button onclick="setServiceStatus('AFTER')" data-status="AFTER" class="status-btn neu-btn active py-2 px-2 rounded-lg text-[11px] font-medium text-emerald-300">
+                                    ✅ AFTER
+                                </button>
+                                <button onclick="setServiceStatus('QC PASSED')" data-status="QC PASSED" class="status-btn neu-btn py-2 px-2 rounded-lg text-[11px] font-medium text-sky-300">
+                                    🛡️ QC PASS
+                                </button>
+                                <button onclick="setServiceStatus('WARRANTY')" data-status="WARRANTY" class="status-btn neu-btn py-2 px-2 rounded-lg text-[11px] font-medium text-purple-300 col-span-2">
+                                    ⭐ WARRANTY (รับประกัน)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Text Input for Job ID / Date -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center">
+                                <label for="stampTextInput" class="text-[11px] text-slate-300">รหัสงาน / วันที่ (เว้นว่างได้):</label>
+                                <button onclick="insertTodayStamp()" class="text-[10px] text-[#E87A24] underline">ใช้วันที่วันนี้</button>
+                            </div>
+                            <input id="stampTextInput" type="text" value="JOB-2026-001 | 25/10/2026" 
+                                   placeholder="เช่น JOB-2026-089 | 25/10/2026"
+                                   oninput="renderMainCanvas()"
+                                   class="w-full px-3 py-2 rounded-xl bg-[#080F1E] border border-white/15 text-xs font-mono text-white focus:outline-none focus:border-[#E87A24]">
+                        </div>
+
+                        <!-- Auto-Loaded Folder Logo Status & Chroma-Key Adjustment (No Upload Button) -->
+                        <div class="pt-2.5 border-t border-white/10 space-y-2">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-14 h-12 rounded-lg checkerboard border border-white/15 flex items-center justify-center p-1 shrink-0 relative">
+                                    <canvas id="logoMiniPreview" class="max-w-full max-h-full object-contain"></canvas>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-bold text-white">โลโก้ประจำโฟลเดอร์</span>
+                                        <span id="logoSourceBadge" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                            AUTO
+                                        </span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 truncate">
+                                        ดึงอัตโนมัติจากไฟล์ใน GitHub ของท่าน
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- White Background Removal Toggle (In case folder logo is .jpg) -->
+                            <label class="flex items-center justify-between cursor-pointer pt-1">
+                                <span class="text-[11px] text-slate-300">ตัดพื้นหลังสีขาวของโลโก้อัตโนมัติ</span>
+                                <input type="checkbox" id="chromaKeyToggle" checked class="accent-[#E87A24] w-4 h-4" onchange="updateLogoProcessing()">
+                            </label>
+
+                            <div id="chromaThresholdGroup" class="space-y-1">
+                                <div class="flex justify-between text-[10px]">
+                                    <span class="text-slate-400">ระดับการตัดสีขาว (Threshold)</span>
+                                    <span id="chromaThresholdVal" class="font-mono text-amber-400">235</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="stepSlider('chromaThresholdSlider', -5, updateLogoProcessing)" class="neu-btn w-7 h-7 rounded-lg font-mono text-xs font-bold shrink-0">-</button>
+                                    <input type="range" id="chromaThresholdSlider" min="180" max="252" value="235" oninput="updateLogoProcessing()">
+                                    <button onclick="stepSlider('chromaThresholdSlider', 5, updateLogoProcessing)" class="neu-btn w-7 h-7 rounded-lg font-mono text-xs font-bold shrink-0">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- SECTION 3: SCALE, OPACITY & ADAPTIVE CONTRAST BACKDROP -->
-            <div class="neu-inset rounded-2xl p-3.5 space-y-3 border border-white/5">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[#E87A24] flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
-                    </svg>
-                    3. ขนาด ความโปร่งแสง & ป้ายรองหลังอัจฉริยะ
-                </h2>
-
-                <!-- Scale & Opacity Sliders -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <div class="flex justify-between text-[11px] mb-1">
-                            <span class="text-slate-400">ขนาดโลโก้ (Scale)</span>
-                            <span id="scaleValLabel" class="font-mono text-amber-400">22%</span>
-                        </div>
-                        <input type="range" id="scaleSlider" min="5" max="80" value="22" oninput="onSliderUpdate()">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[11px] mb-1">
-                            <span class="text-slate-400">ความโปร่งแสง (Opacity)</span>
-                            <span id="opacityValLabel" class="font-mono text-amber-400">92%</span>
-                        </div>
-                        <input type="range" id="opacitySlider" min="10" max="100" value="92" oninput="onSliderUpdate()">
-                    </div>
+            <!-- DEDICATED SAFE SCROLL LANE ON MOBILE (Right 44px Gutter) -->
+            <div class="w-11 lg:hidden shrink-0 border-l border-white/10 bg-[#060C18]/90 scroll-lane-grip flex flex-col items-center justify-between py-6 select-none"
+                 title="วางนิ้วแถบนี้เพื่อเลื่อนหน้าจอขึ้น-ลงโดยไม่โดนปุ่มตั้งค่า">
+                <span class="text-[10px] font-mono text-[#E87A24] font-bold">▲</span>
+                <div class="writing-mode-vertical text-[10px] font-semibold text-slate-300 tracking-widest" style="writing-mode: vertical-rl;">
+                    พื้นที่วางนิ้วเลื่อนจอ
                 </div>
-
-                <!-- Adaptive Contrast Backdrop Selector -->
-                <div class="pt-1 space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[11px] text-slate-300 font-medium">พื้นหลังรองรับโลโก้ (ป้องกันตัวอักษรสีน้ำเงินจมในภาพมืด):</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-1.5">
-                        <button onclick="setBackdropStyle('none')" data-backdrop="none" class="backdrop-btn neu-btn py-1.5 px-2.5 rounded-xl text-xs font-medium">
-                            ไม่มี (None)
-                        </button>
-                        <button onclick="setBackdropStyle('glass')" data-backdrop="glass" class="backdrop-btn neu-btn active py-1.5 px-2.5 rounded-xl text-xs font-medium">
-                            ✨ ป้ายกระจกขาว (แนะนำ)
-                        </button>
-                        <button onclick="setBackdropStyle('glow')" data-backdrop="glow" class="backdrop-btn neu-btn py-1.5 px-2.5 rounded-xl text-xs font-medium">
-                            💡 ขอบเรืองแสงขาว
-                        </button>
-                        <button onclick="setBackdropStyle('dark')" data-backdrop="dark" class="backdrop-btn neu-btn py-1.5 px-2.5 rounded-xl text-xs font-medium">
-                            🌑 ป้ายทึบมืดขอบทอง
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION 4: SERVICE STAMP / JOB ID BADGE -->
-            <div class="neu-inset rounded-2xl p-3.5 space-y-3 border border-white/5">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[#E87A24] flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    4. ป้ายกำกับงานซ่อม (Service Stamp)
-                </h2>
-
-                <!-- Status Pill Selector -->
-                <div class="space-y-1">
-                    <label class="text-[11px] text-slate-400">ป้ายสถานะหน้างาน (Status Tag):</label>
-                    <div class="grid grid-cols-3 gap-1.5">
-                        <button onclick="setServiceStatus('NONE')" data-status="NONE" class="status-btn neu-btn py-1.5 px-2 rounded-lg text-[11px] font-medium">
-                            ไม่แสดง
-                        </button>
-                        <button onclick="setServiceStatus('BEFORE')" data-status="BEFORE" class="status-btn neu-btn py-1.5 px-2 rounded-lg text-[11px] font-medium text-amber-300">
-                            🔧 BEFORE
-                        </button>
-                        <button onclick="setServiceStatus('AFTER')" data-status="AFTER" class="status-btn neu-btn active py-1.5 px-2 rounded-lg text-[11px] font-medium text-emerald-300">
-                            ✅ AFTER
-                        </button>
-                        <button onclick="setServiceStatus('QC PASSED')" data-status="QC PASSED" class="status-btn neu-btn py-1.5 px-2 rounded-lg text-[11px] font-medium text-sky-300">
-                            🛡️ QC PASSED
-                        </button>
-                        <button onclick="setServiceStatus('WARRANTY')" data-status="WARRANTY" class="status-btn neu-btn py-1.5 px-2 rounded-lg text-[11px] font-medium text-purple-300 col-span-2">
-                            ⭐ WARRANTY (รับประกันงานซ่อม)
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Custom Text Input for Job ID / Date -->
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center">
-                        <label for="stampTextInput" class="text-[11px] text-slate-400">รหัสงาน / วันที่ (เว้นว่างได้):</label>
-                        <button onclick="insertTodayStamp()" class="text-[10px] text-[#E87A24] hover:underline">ใช้วันที่ปัจจุบัน</button>
-                    </div>
-                    <input id="stampTextInput" type="text" value="JOB-2026-001 | 21/10/2026" 
-                           placeholder="เช่น JOB-2026-089 | 21/10/2026"
-                           oninput="renderMainCanvas()"
-                           class="w-full px-3 py-2 rounded-xl bg-[#080F1E] border border-white/15 text-xs font-mono text-white focus:outline-none focus:border-[#E87A24]">
-                </div>
+                <span class="text-[10px] font-mono text-[#E87A24] font-bold">▼</span>
             </div>
 
         </aside>
     </main>
 
     <!-- ==================== TOAST NOTIFICATION ==================== -->
-    <div id="toastBox" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div id="toastBox" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:w-80 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
         <div class="glass-panel px-4 py-3 rounded-2xl border border-[#E87A24]/60 shadow-2xl flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl bg-[#E87A24]/20 border border-[#E87A24] flex items-center justify-center text-[#E87A24]">
+            <div class="w-8 h-8 rounded-xl bg-[#E87A24]/20 border border-[#E87A24] flex items-center justify-center text-[#E87A24] shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <div>
-                <p id="toastTitle" class="text-xs font-bold text-white">บันทึกภาพสำเร็จ</p>
-                <p id="toastDesc" class="text-[11px] text-slate-300">ประมวลผลลายน้ำความละเอียดต้นฉบับเรียบร้อย</p>
+            <div class="min-w-0">
+                <p id="toastTitle" class="text-xs font-bold text-white truncate">บันทึกภาพสำเร็จ</p>
+                <p id="toastDesc" class="text-[11px] text-slate-300 truncate">ประมวลผลลายน้ำความละเอียดต้นฉบับเรียบร้อย</p>
             </div>
         </div>
     </div>
@@ -549,49 +568,57 @@
          * STATE MANAGEMENT & CONFIGURATION
          **************************************************************/
         const state = {
-            // Queue of target photos: { id, title, canvas, width, height }
             queue: [],
             activeQueueIndex: 0,
 
-            // Raw & Processed Logo Canvases
             rawLogoCanvas: null,
             processedLogoCanvas: null,
             removeWhite: true,
             whiteThreshold: 235,
 
-            // Watermark Parameters
             mode: 'single',         // 'single' | 'tiled'
             anchor: 'bottom-right', // 9-point anchor or 'custom'
-            customX: 0.86,          // Normalized center X (0..1)
-            customY: 0.84,          // Normalized center Y (0..1)
-            scale: 0.22,            // 0.05 to 0.80
-            opacity: 0.92,          // 0.10 to 1.00
-            margin: 0.04,           // 0.00 to 0.15
+            customX: 0.86,
+            customY: 0.84,
+            scale: 0.22,
+            opacity: 0.92,
+            margin: 0.04,
             backdrop: 'glass',      // 'none' | 'glass' | 'glow' | 'dark'
             tileAngle: -30,
             tileSpacing: 260,
 
-            // Service Stamp
-            serviceStatus: 'AFTER', // 'NONE' | 'BEFORE' | 'AFTER' | 'QC PASSED' | 'WARRANTY'
-            stampText: 'JOB-2026-001 | 21/10/2026',
+            serviceStatus: 'AFTER',
+            stampText: 'JOB-2026-001 | 25/10/2026',
 
-            // Interactive Drag State on Preview Canvas
+            // Touch & Scroll Safety States
+            allowCanvasDrag: true,   // Only drags when touching INSIDE the logo box
+            panelTouchLocked: false, // Locks sidebar controls if user wants 100% safe scrolling
             isDraggingWatermark: false,
-            lastBoundingBox: null   // { x, y, w, h } in source pixels
+            dragOffsetX: 0,
+            dragOffsetY: 0,
+            lastBoundingBox: null    // { x, y, w, h } in canvas pixels
         };
 
         const previewCanvas = document.getElementById('previewCanvas');
-        const previewCtx = previewCanvas.getContext('2d');
         const logoMiniPreview = document.getElementById('logoMiniPreview');
         const logoMiniCtx = logoMiniPreview.getContext('2d');
 
         /**************************************************************
-         * 1. AUTO-LOADER FOR EXTERNAL LOGO (logo.jpg / 1000008252.jpg)
-         * Automatically loads your real logo file when hosted online,
-         * and falls back safely if opened via local file:// protocol.
+         * 1. AUTO-LOADER FOR FOLDER LOGO (Supports both .png & .jpg)
+         * Automatically checks logo.png, logo.jpg, 1000008252.jpg, etc.
          **************************************************************/
         async function loadDefaultOrExternalLogo() {
-            const candidateFiles = ['./logo.jpg', './1000008252.jpg', './logo.png'];
+            const candidateFiles = [
+                './logo.png',
+                './logo.jpg',
+                './logo.jpeg',
+                './1000008252.jpg',
+                './1000008252.png',
+                './Logo.png',
+                './Logo.jpg'
+            ];
+
+            const badge = document.getElementById('logoSourceBadge');
 
             for (const src of candidateFiles) {
                 try {
@@ -605,7 +632,6 @@
                                 c.height = img.naturalHeight || img.height;
                                 const ctx = c.getContext('2d');
                                 ctx.drawImage(img, 0, 0);
-                                // Test pixel read to verify no CORS taint on file:// protocol
                                 ctx.getImageData(0, 0, 1, 1);
                                 resolve(c);
                             } catch (securityErr) {
@@ -617,17 +643,18 @@
                     });
 
                     state.rawLogoCanvas = loadedCanvas;
+                    if (badge) badge.textContent = src.replace('./', '');
                     processLogoChromaKey();
                     renderMainCanvas();
-                    showToast('โหลดโลโก้หลักสำเร็จ', `ดึงไฟล์โลโก้ (${src}) เข้าระบบอัตโนมัติแล้ว`);
                     return;
                 } catch (err) {
-                    // Proceed to next candidate filename or procedural fallback
+                    // Continue scanning next filename
                 }
             }
 
-            // Fallback: Use built-in procedural 3D logo
+            // Fallback if no file is found in folder
             state.rawLogoCanvas = createDefaultPhuwasinLogo();
+            if (badge) badge.textContent = 'BUILT-IN 3D';
             processLogoChromaKey();
             renderMainCanvas();
         }
@@ -638,18 +665,15 @@
             c.height = 760;
             const ctx = c.getContext('2d');
 
-            // 1. Solid White Background (matching 1000008252.jpg)
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, c.width, c.height);
 
             ctx.save();
-            // Soft drop shadow like the original 3D render
             ctx.shadowColor = 'rgba(15, 23, 42, 0.28)';
             ctx.shadowBlur = 18;
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 10;
 
-            // --- DRAW BOLD 3D NAVY 'P' ---
             const pGrad = ctx.createLinearGradient(170, 80, 460, 440);
             pGrad.addColorStop(0, '#224372');
             pGrad.addColorStop(0.5, '#132A4A');
@@ -669,11 +693,6 @@
             ctx.arc(340, 232, 82, 0, Math.PI * 2, true);
             ctx.fill();
 
-            ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
-            ctx.lineWidth = 4;
-            ctx.stroke();
-
-            // --- DRAW VIBRANT 3D ORANGE 'S' ---
             const sGrad = ctx.createLinearGradient(450, 90, 720, 460);
             sGrad.addColorStop(0, '#FBBF24');
             sGrad.addColorStop(0.35, '#E87A24');
@@ -694,102 +713,40 @@
             ctx.closePath();
             ctx.fill();
 
-            // --- DRAW METALLIC GEAR INSIDE 'P' ---
             const gx = 342, gy = 232;
             ctx.save();
             ctx.translate(gx, gy);
-            const teeth = 10;
-            const outerR = 72;
-            const innerR = 56;
-            const gearGrad = ctx.createLinearGradient(-60, -60, 60, 60);
-            gearGrad.addColorStop(0, '#F1F5F9');
-            gearGrad.addColorStop(0.5, '#94A3B8');
-            gearGrad.addColorStop(1, '#475569');
-
-            ctx.fillStyle = gearGrad;
+            const teeth = 10, outerR = 72, innerR = 56;
+            ctx.fillStyle = '#94A3B8';
             ctx.beginPath();
             for (let i = 0; i < teeth * 2; i++) {
                 const r = (i % 2 === 0) ? outerR : innerR;
                 const angle = (i * Math.PI) / teeth;
-                const px = Math.cos(angle) * r;
-                const py = Math.sin(angle) * r;
-                if (i === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
+                const px = Math.cos(angle) * r, py = Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
             }
             ctx.closePath();
             ctx.fill();
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#334155';
-            ctx.stroke();
 
-            // Diagonal Circuit Nodes
-            ctx.strokeStyle = '#E87A24';
-            ctx.lineWidth = 12;
-            ctx.beginPath();
-            ctx.moveTo(28, -28);
-            ctx.lineTo(88, -88);
-            ctx.stroke();
-            ctx.fillStyle = '#E87A24';
-            ctx.beginPath();
-            ctx.arc(94, -94, 17, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.strokeStyle = '#132A4A';
-            ctx.lineWidth = 12;
-            ctx.beginPath();
-            ctx.moveTo(-28, 28);
-            ctx.lineTo(-82, 82);
-            ctx.stroke();
-            ctx.fillStyle = '#132A4A';
-            ctx.beginPath();
-            ctx.arc(-88, 88, 17, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Inner metallic disc
-            const discGrad = ctx.createRadialGradient(-10, -10, 5, 0, 0, 42);
-            discGrad.addColorStop(0, '#FFFFFF');
-            discGrad.addColorStop(0.6, '#CBD5E1');
-            discGrad.addColorStop(1, '#64748B');
-            ctx.fillStyle = discGrad;
+            ctx.fillStyle = '#CBD5E1';
             ctx.beginPath();
             ctx.arc(0, 0, 40, 0, Math.PI * 2);
             ctx.fill();
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#475569';
-            ctx.stroke();
 
-            // Center Golden Lightning Bolt
             ctx.fillStyle = '#E87A24';
             ctx.beginPath();
-            ctx.moveTo(6, -26);
-            ctx.lineTo(-16, 4);
-            ctx.lineTo(2, 4);
-            ctx.lineTo(-6, 26);
-            ctx.lineTo(16, -4);
-            ctx.lineTo(-2, -4);
+            ctx.moveTo(6, -26); ctx.lineTo(-16, 4); ctx.lineTo(2, 4);
+            ctx.lineTo(-6, 26); ctx.lineTo(16, -4); ctx.lineTo(-2, -4);
             ctx.closePath();
             ctx.fill();
             ctx.restore();
 
-            // --- DRAW 3D TYPOGRAPHY: "PHUWASIN" & "PRO SERVICE" ---
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-
             ctx.font = '900 104px "Kanit", sans-serif';
-            ctx.fillStyle = '#071120';
-            ctx.fillText('PHUWASIN', 450, 556);
-
-            const txtGrad = ctx.createLinearGradient(0, 500, 0, 600);
-            txtGrad.addColorStop(0, '#23487A');
-            txtGrad.addColorStop(1, '#0F2342');
-            ctx.fillStyle = txtGrad;
+            ctx.fillStyle = '#132A4A';
             ctx.fillText('PHUWASIN', 450, 550);
-
             ctx.font = '800 64px "Kanit", sans-serif';
-            ctx.fillStyle = '#071120';
-            ctx.fillText('PRO SERVICE', 450, 650);
-
-            ctx.fillStyle = '#16325B';
             ctx.fillText('PRO SERVICE', 450, 645);
 
             ctx.restore();
@@ -797,7 +754,7 @@
         }
 
         /**************************************************************
-         * 2. WHITE-TO-ALPHA CHROMA-KEY ENGINE (Pixel-Level Soft Feathering)
+         * 2. WHITE-TO-ALPHA CHROMA-KEY ENGINE
          **************************************************************/
         function processLogoChromaKey() {
             if (!state.rawLogoCanvas) return;
@@ -819,14 +776,8 @@
                 const featherRange = 28;
 
                 for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i];
-                    const g = data[i + 1];
-                    const b = data[i + 2];
-
-                    const maxC = Math.max(r, g, b);
-                    const minC = Math.min(r, g, b);
-                    const saturationDiff = maxC - minC;
-
+                    const r = data[i], g = data[i + 1], b = data[i + 2];
+                    const saturationDiff = Math.max(r, g, b) - Math.min(r, g, b);
                     const luminance = (r * 0.299 + g * 0.587 + b * 0.114);
 
                     if (r >= threshold && g >= threshold && b >= threshold && saturationDiff < 25) {
@@ -841,11 +792,10 @@
 
             state.processedLogoCanvas = outCanvas;
 
-            // Update Mini Transparency Preview in Sidebar
-            logoMiniPreview.width = 240;
-            logoMiniPreview.height = 190;
-            logoMiniCtx.clearRect(0, 0, 240, 190);
-            logoMiniCtx.drawImage(outCanvas, 0, 0, 240, 190);
+            logoMiniPreview.width = 200;
+            logoMiniPreview.height = 160;
+            logoMiniCtx.clearRect(0, 0, 200, 160);
+            logoMiniCtx.drawImage(outCanvas, 0, 0, 200, 160);
         }
 
         function updateLogoProcessing() {
@@ -856,197 +806,59 @@
 
             state.removeWhite = toggle.checked;
             state.whiteThreshold = parseInt(slider.value, 10);
-            label.textContent = `${state.whiteThreshold} / 255`;
+            label.textContent = state.whiteThreshold;
             group.style.opacity = state.removeWhite ? '1' : '0.4';
 
             processLogoChromaKey();
             renderMainCanvas();
         }
 
-        async function resetToDefaultLogo() {
-            document.getElementById('chromaKeyToggle').checked = true;
-            document.getElementById('chromaThresholdSlider').value = 235;
-            state.removeWhite = true;
-            state.whiteThreshold = 235;
-            document.getElementById('chromaThresholdVal').textContent = '235 / 255';
-            document.getElementById('chromaThresholdGroup').style.opacity = '1';
-
-            await loadDefaultOrExternalLogo();
-            showToast('รีเซ็ตโลโก้สำเร็จ', 'กลับมาใช้โลโก้หลัก PHUWASIN PRO SERVICE');
-        }
-
         /**************************************************************
-         * 3. PROCEDURAL HIGH-RES TEST SCENES (1600 x 1066 px)
+         * 3. PROCEDURAL HIGH-RES TEST SCENES
          **************************************************************/
         function generateTestScenes() {
             const scenes = [];
 
-            // SCENE 1: Dark Gaming/Workstation PC Build
+            // SCENE 1: Dark PC Case
             const c1 = document.createElement('canvas');
-            c1.width = 1600;
-            c1.height = 1066;
+            c1.width = 1600; c1.height = 1066;
             const ctx1 = c1.getContext('2d');
-
             const bg1 = ctx1.createLinearGradient(0, 0, 1600, 1066);
-            bg1.addColorStop(0, '#070B14');
-            bg1.addColorStop(0.5, '#0F172A');
-            bg1.addColorStop(1, '#050811');
-            ctx1.fillStyle = bg1;
-            ctx1.fillRect(0, 0, 1600, 1066);
-
-            ctx1.strokeStyle = 'rgba(30, 64, 175, 0.25)';
-            ctx1.lineWidth = 2;
-            for (let x = 0; x < 1600; x += 40) {
-                ctx1.beginPath(); ctx1.moveTo(x, 0); ctx1.lineTo(x, 1066); ctx1.stroke();
-            }
-            for (let y = 0; y < 1066; y += 40) {
-                ctx1.beginPath(); ctx1.moveTo(0, y); ctx1.lineTo(1600, y); ctx1.stroke();
-            }
+            bg1.addColorStop(0, '#070B14'); bg1.addColorStop(0.5, '#0F172A'); bg1.addColorStop(1, '#050811');
+            ctx1.fillStyle = bg1; ctx1.fillRect(0, 0, 1600, 1066);
 
             ctx1.fillStyle = '#111827';
-            ctx1.beginPath();
-            ctx1.roundRect(180, 420, 1050, 280, 20);
-            ctx1.fill();
-            ctx1.strokeStyle = '#374151';
-            ctx1.lineWidth = 4;
-            ctx1.stroke();
-
-            ctx1.fillStyle = '#1F2937';
-            for (let i = 220; i < 1180; i += 22) {
-                ctx1.fillRect(i, 450, 10, 220);
-            }
-
+            ctx1.beginPath(); ctx1.roundRect(180, 420, 1050, 280, 20); ctx1.fill();
             const rgbGrad = ctx1.createLinearGradient(200, 550, 1200, 550);
-            rgbGrad.addColorStop(0, '#E87A24');
-            rgbGrad.addColorStop(0.5, '#3B82F6');
-            rgbGrad.addColorStop(1, '#E87A24');
-            ctx1.fillStyle = rgbGrad;
-            ctx1.fillRect(200, 545, 1010, 14);
+            rgbGrad.addColorStop(0, '#E87A24'); rgbGrad.addColorStop(0.5, '#3B82F6'); rgbGrad.addColorStop(1, '#E87A24');
+            ctx1.fillStyle = rgbGrad; ctx1.fillRect(200, 545, 1010, 14);
 
-            ctx1.save();
-            ctx1.translate(680, 230);
-            ctx1.fillStyle = '#090D16';
-            ctx1.beginPath(); ctx1.arc(0, 0, 110, 0, Math.PI * 2); ctx1.fill();
-            ctx1.lineWidth = 8;
-            ctx1.strokeStyle = '#E87A24';
-            ctx1.stroke();
-            ctx1.fillStyle = '#F8FAFC';
-            ctx1.font = '700 28px "JetBrains Mono", monospace';
-            ctx1.textAlign = 'center';
-            ctx1.fillText('CPU 42°C', 0, 8);
-            ctx1.restore();
+            ctx1.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx1.font = '600 28px "Kanit", sans-serif';
+            ctx1.fillText('ภาพตัวอย่าง #1: เคสคอมพิวเตอร์โทนมืด (แตะปุ่ม "+ เพิ่มรูป" เพื่อใช้รูปจริง)', 60, 75);
 
-            ctx1.fillStyle = 'rgba(255,255,255,0.65)';
-            ctx1.font = '600 26px "Kanit", sans-serif';
-            ctx1.fillText('ภาพจำลอง #1: ภายในเคสคอมพิวเตอร์โทนมืด (ทดสอบการมองเห็นตัวอักษรสีน้ำเงินเข้ม)', 60, 70);
+            scenes.push({ id: 'scene-1', title: 'เคสพีซีโทนมืด', canvas: c1, width: 1600, height: 1066 });
 
-            scenes.push({
-                id: 'scene-1',
-                title: 'เคสพีซีโทนมืด (ทดสอบคอนทราสต์)',
-                canvas: c1,
-                width: 1600,
-                height: 1066
-            });
-
-            // SCENE 2: PCB Circuit & Hardware Inspection
+            // SCENE 2: PCB
             const c2 = document.createElement('canvas');
-            c2.width = 1600;
-            c2.height = 1066;
+            c2.width = 1600; c2.height = 1066;
             const ctx2 = c2.getContext('2d');
+            ctx2.fillStyle = '#052e25'; ctx2.fillRect(0, 0, 1600, 1066);
+            ctx2.fillStyle = '#0F172A'; ctx2.fillRect(580, 310, 420, 420);
+            ctx2.strokeStyle = '#F59E0B'; ctx2.lineWidth = 4; ctx2.strokeRect(580, 310, 420, 420);
+            ctx2.fillStyle = '#E2E8F0'; ctx2.font = '700 34px "JetBrains Mono", monospace';
+            ctx2.textAlign = 'center'; ctx2.fillText('PHUWASIN-MCU-X9', 790, 520);
+            scenes.push({ id: 'scene-2', title: 'แผงวงจร PCB', canvas: c2, width: 1600, height: 1066 });
 
-            const bg2 = ctx2.createLinearGradient(0, 0, 1600, 1066);
-            bg2.addColorStop(0, '#06392F');
-            bg2.addColorStop(1, '#03221C');
-            ctx2.fillStyle = bg2;
-            ctx2.fillRect(0, 0, 1600, 1066);
-
-            ctx2.strokeStyle = 'rgba(245, 158, 11, 0.35)';
-            ctx2.lineWidth = 5;
-            for (let i = 0; i < 28; i++) {
-                ctx2.beginPath();
-                const startY = 80 + i * 35;
-                ctx2.moveTo(0, startY);
-                ctx2.lineTo(350 + (i % 5) * 90, startY);
-                ctx2.lineTo(500 + (i % 5) * 90, startY + 75);
-                ctx2.lineTo(1600, startY + 75);
-                ctx2.stroke();
-            }
-
-            ctx2.fillStyle = '#0F172A';
-            ctx2.fillRect(580, 310, 420, 420);
-            ctx2.strokeStyle = '#F59E0B';
-            ctx2.lineWidth = 4;
-            ctx2.strokeRect(580, 310, 420, 420);
-
-            ctx2.fillStyle = '#FBBF24';
-            for (let p = 610; p < 980; p += 26) {
-                ctx2.fillRect(p, 275, 12, 35);
-                ctx2.fillRect(p, 730, 12, 35);
-            }
-            ctx2.fillStyle = '#E2E8F0';
-            ctx2.font = '700 34px "JetBrains Mono", monospace';
-            ctx2.textAlign = 'center';
-            ctx2.fillText('PHUWASIN-MCU-X9', 790, 510);
-            ctx2.font = '400 22px "JetBrains Mono", monospace';
-            ctx2.fillStyle = '#38BDF8';
-            ctx2.fillText('DIAGNOSTIC: PASS 5.02V', 790, 555);
-
-            ctx2.textAlign = 'left';
-            ctx2.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx2.font = '600 26px "Kanit", sans-serif';
-            ctx2.fillText('ภาพจำลอง #2: แผงวงจรอิเล็กทรอนิกส์และงานซ่อมเมนบอร์ด', 60, 70);
-
-            scenes.push({
-                id: 'scene-2',
-                title: 'แผงวงจร PCB & ฮาร์ดแวร์',
-                canvas: c2,
-                width: 1600,
-                height: 1066
-            });
-
-            // SCENE 3: Bright Service Quotation / Inspection Sheet
+            // SCENE 3: Service Report
             const c3 = document.createElement('canvas');
-            c3.width = 1600;
-            c3.height = 1066;
+            c3.width = 1600; c3.height = 1066;
             const ctx3 = c3.getContext('2d');
-
-            ctx3.fillStyle = '#F1F5F9';
-            ctx3.fillRect(0, 0, 1600, 1066);
-
-            ctx3.strokeStyle = '#CBD5E1';
-            ctx3.lineWidth = 1;
-            for (let x = 0; x < 1600; x += 32) {
-                ctx3.beginPath(); ctx3.moveTo(x, 0); ctx3.lineTo(x, 1066); ctx3.stroke();
-            }
-            for (let y = 0; y < 1066; y += 32) {
-                ctx3.beginPath(); ctx3.moveTo(0, y); ctx3.lineTo(1600, y); ctx3.stroke();
-            }
-
-            ctx3.fillStyle = '#132A4A';
-            ctx3.fillRect(80, 80, 1440, 130);
-            ctx3.fillStyle = '#FFFFFF';
-            ctx3.font = '700 42px "Kanit", sans-serif';
+            ctx3.fillStyle = '#F1F5F9'; ctx3.fillRect(0, 0, 1600, 1066);
+            ctx3.fillStyle = '#132A4A'; ctx3.fillRect(80, 80, 1440, 130);
+            ctx3.fillStyle = '#FFFFFF'; ctx3.font = '700 42px "Kanit", sans-serif';
             ctx3.fillText('ใบรายงานผลการตรวจเช็คและซ่อมบำรุงระบบ (SERVICE REPORT)', 120, 158);
-
-            for (let r = 0; r < 6; r++) {
-                const ry = 260 + r * 95;
-                ctx3.fillStyle = r % 2 === 0 ? '#FFFFFF' : '#E2E8F0';
-                ctx3.fillRect(80, ry, 1440, 78);
-                ctx3.fillStyle = '#1E293B';
-                ctx3.font = '500 26px "Kanit", sans-serif';
-                ctx3.fillText(`รายการตรวจสอบระบบที่ #${r + 1} — สถานะการทำงานของฮาร์ดแวร์และเพาเวอร์ซัพพลาย`, 115, ry + 48);
-                ctx3.fillStyle = '#059669';
-                ctx3.font = '700 24px "JetBrains Mono", monospace';
-                ctx3.fillText('[ OK / PASSED ]', 1280, ry + 48);
-            }
-
-            scenes.push({
-                id: 'scene-3',
-                title: 'เอกสารใบเสนอราคาโทนสว่าง',
-                canvas: c3,
-                width: 1600,
-                height: 1066
-            });
+            scenes.push({ id: 'scene-3', title: 'ใบเสนอราคาสว่าง', canvas: c3, width: 1600, height: 1066 });
 
             return scenes;
         }
@@ -1054,7 +866,7 @@
         /**************************************************************
          * 4. CORE COMPOSITING & WATERMARK RENDERING ENGINE
          **************************************************************/
-        function renderWatermarkOntoCanvas(targetCanvas, sourceImgOrCanvas) {
+        function renderWatermarkOntoCanvas(targetCanvas, sourceImgOrCanvas, isPreview = false) {
             const w = sourceImgOrCanvas.naturalWidth || sourceImgOrCanvas.width;
             const h = sourceImgOrCanvas.naturalHeight || sourceImgOrCanvas.height;
 
@@ -1062,7 +874,6 @@
             targetCanvas.height = h;
             const ctx = targetCanvas.getContext('2d');
 
-            // 1. Draw Original High-Res Image
             ctx.clearRect(0, 0, w, h);
             ctx.drawImage(sourceImgOrCanvas, 0, 0, w, h);
 
@@ -1099,12 +910,27 @@
                     y -= stampExtraH;
                 }
 
-                state.lastBoundingBox = { x, y, w: logoW, h: logoH + stampExtraH };
+                // Save hit-test bounding box (with generous touch padding)
+                state.lastBoundingBox = {
+                    x: x - 20,
+                    y: y - 20,
+                    w: logoW + 40,
+                    h: logoH + stampExtraH + 40
+                };
 
                 drawSingleBadgeUnit(ctx, x, y, logoW, logoH, hasStamp);
 
+                // Draw subtle active selection frame ONLY while actively dragging on preview
+                if (isPreview && state.isDraggingWatermark) {
+                    ctx.save();
+                    ctx.strokeStyle = '#E87A24';
+                    ctx.lineWidth = Math.max(3, baseDim * 0.004);
+                    ctx.setLineDash([10, 6]);
+                    ctx.strokeRect(x - 12, y - 12, logoW + 24, logoH + stampExtraH + 24);
+                    ctx.restore();
+                }
+
             } else {
-                // TILED ANTI-THEFT GRID MODE
                 state.lastBoundingBox = null;
                 ctx.save();
                 ctx.globalAlpha = state.opacity;
@@ -1247,19 +1073,21 @@
 
             state.stampText = document.getElementById('stampTextInput').value;
 
-            renderWatermarkOntoCanvas(previewCanvas, activeItem.canvas);
+            renderWatermarkOntoCanvas(previewCanvas, activeItem.canvas, true);
 
             document.getElementById('currentSceneTitle').textContent = activeItem.title;
-            document.getElementById('canvasResolutionBadge').textContent = `${activeItem.width} × ${activeItem.height} px`;
+            document.getElementById('canvasResolutionBadge').textContent = `${activeItem.width}×${activeItem.height}`;
 
             const pctX = Math.round(state.customX * 100);
             const pctY = Math.round(state.customY * 100);
             document.getElementById('dragCoordBadge').textContent = 
-                state.mode === 'tiled' ? `โหมด: ปูตาราง (${state.tileAngle}°)` : `พิกัด: (${pctX}%, ${pctY}%)`;
+                state.mode === 'tiled' ? `ปูตาราง (${state.tileAngle}°)` : `พิกัด: (${pctX}%, ${pctY}%)`;
         }
 
         /**************************************************************
-         * 5. INTERACTIVE DRAG-AND-DROP ON CANVAS (Mouse & Touch)
+         * 5. SMART HIT-TEST CANVAS DRAGGING (Prevents Scroll Hijacking!)
+         * Only drags watermark if finger touches INSIDE the logo box.
+         * Swiping anywhere else on the photo scrolls the page normally!
          **************************************************************/
         function getCanvasPixelCoords(evt) {
             const rect = previewCanvas.getBoundingClientRect();
@@ -1275,31 +1103,53 @@
             };
         }
 
+        function isPointInsideLogoBox(pt) {
+            if (!state.lastBoundingBox) return false;
+            const b = state.lastBoundingBox;
+            return (pt.x >= b.x && pt.x <= b.x + b.w && pt.y >= b.y && pt.y <= b.y + b.h);
+        }
+
         function onCanvasPointerDown(evt) {
-            if (state.mode !== 'single') return;
+            if (state.mode !== 'single' || !state.allowCanvasDrag) return;
             const pt = getCanvasPixelCoords(evt);
 
+            // CRITICAL FIX: Only start dragging if the finger/mouse actually touches the logo!
+            if (!isPointInsideLogoBox(pt)) {
+                state.isDraggingWatermark = false;
+                return; // Let browser scroll the page normally!
+            }
+
+            if (evt.cancelable) evt.preventDefault();
             state.isDraggingWatermark = true;
             state.anchor = 'custom';
             highlightActiveAnchorButton();
 
-            state.customX = Math.max(0.05, Math.min(0.95, pt.x / previewCanvas.width));
-            state.customY = Math.max(0.05, Math.min(0.95, pt.y / previewCanvas.height));
+            const currentCenterX = state.customX * previewCanvas.width;
+            const currentCenterY = state.customY * previewCanvas.height;
+            state.dragOffsetX = pt.x - currentCenterX;
+            state.dragOffsetY = pt.y - currentCenterY;
+
             renderMainCanvas();
         }
 
         function onCanvasPointerMove(evt) {
             if (!state.isDraggingWatermark || state.mode !== 'single') return;
-            evt.preventDefault();
-            const pt = getCanvasPixelCoords(evt);
+            if (evt.cancelable) evt.preventDefault();
 
-            state.customX = Math.max(0.04, Math.min(0.96, pt.x / previewCanvas.width));
-            state.customY = Math.max(0.04, Math.min(0.96, pt.y / previewCanvas.height));
+            const pt = getCanvasPixelCoords(evt);
+            const newCenterX = pt.x - state.dragOffsetX;
+            const newCenterY = pt.y - state.dragOffsetY;
+
+            state.customX = Math.max(0.04, Math.min(0.96, newCenterX / previewCanvas.width));
+            state.customY = Math.max(0.04, Math.min(0.96, newCenterY / previewCanvas.height));
             renderMainCanvas();
         }
 
         function onCanvasPointerUp() {
-            state.isDraggingWatermark = false;
+            if (state.isDraggingWatermark) {
+                state.isDraggingWatermark = false;
+                renderMainCanvas();
+            }
         }
 
         previewCanvas.addEventListener('mousedown', onCanvasPointerDown);
@@ -1310,9 +1160,72 @@
         window.addEventListener('touchmove', onCanvasPointerMove, { passive: false });
         window.addEventListener('touchend', onCanvasPointerUp);
 
+        function toggleCanvasDragMode() {
+            state.allowCanvasDrag = !state.allowCanvasDrag;
+            const btn = document.getElementById('canvasDragToggleBtn');
+            const icon = document.getElementById('canvasDragIcon');
+            const label = document.getElementById('canvasDragLabel');
+
+            if (state.allowCanvasDrag) {
+                btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all flex items-center gap-1 bg-emerald-500/20 border-emerald-400/40 text-emerald-200';
+                icon.textContent = '✋';
+                label.textContent = 'แตะตัวโลโก้เพื่อลาก';
+                showToast('เปิดโหมดลากโลโก้', 'แตะที่ตัวโลโก้บนภาพเพื่อลากเปลี่ยนตำแหน่งได้');
+            } else {
+                btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-all flex items-center gap-1 bg-amber-500/20 border-amber-400/40 text-amber-200';
+                icon.textContent = '🔒';
+                label.textContent = 'ล็อกโลโก้ (เลื่อนจอ 100%)';
+                showToast('ล็อกตำแหน่งโลโก้บนภาพแล้ว', 'ปัดนิ้วบนภาพเพื่อเลื่อนหน้าจอได้โดยโลโก้ไม่ขยับ');
+            }
+        }
+
+        function togglePanelTouchLock() {
+            state.panelTouchLocked = !state.panelTouchLocked;
+            const container = document.getElementById('lockableControlsContainer');
+            const btn = document.getElementById('panelLockBtn');
+            const icon = document.getElementById('panelLockIcon');
+            const text = document.getElementById('panelLockText');
+
+            container.classList.toggle('controls-locked', state.panelTouchLocked);
+
+            if (state.panelTouchLocked) {
+                btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all flex items-center gap-1 bg-rose-600/30 border-rose-400/50 text-rose-200';
+                icon.textContent = '🔒';
+                text.textContent = 'ล็อกปุ่มแล้ว (แตะเพื่อปลด)';
+            } else {
+                btn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all flex items-center gap-1 bg-slate-800/90 border-white/15 text-slate-300';
+                icon.textContent = '🔓';
+                text.textContent = 'ล็อกปุ่มกันนิ้วลั่น: ปิด';
+            }
+        }
+
         /**************************************************************
-         * 6. UI CONTROLS & EVENT HANDLERS
+         * 6. TAB SWITCHING & STEPPER BUTTONS
          **************************************************************/
+        function switchControlTab(tabId) {
+            ['tab-pos', 'tab-style', 'tab-stamp'].forEach(id => {
+                const pane = document.getElementById(id);
+                const btn = document.getElementById(`btn-${id}`);
+                if (id === tabId) {
+                    pane.classList.remove('hidden');
+                    btn.classList.add('active');
+                } else {
+                    pane.classList.add('hidden');
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function stepSlider(sliderId, delta, callbackFn) {
+            const slider = document.getElementById(sliderId);
+            if (!slider) return;
+            const min = parseFloat(slider.min);
+            const max = parseFloat(slider.max);
+            const current = parseFloat(slider.value);
+            slider.value = Math.max(min, Math.min(max, current + delta));
+            if (typeof callbackFn === 'function') callbackFn();
+        }
+
         function setWatermarkMode(mode) {
             state.mode = mode;
             document.getElementById('modeSingleBtn').classList.toggle('active', mode === 'single');
@@ -1393,7 +1306,7 @@
         }
 
         /**************************************************************
-         * 7. BATCH QUEUE FILMSTRIP & FILE UPLOAD HANDLERS
+         * 7. BATCH QUEUE FILMSTRIP & TARGET PHOTO UPLOAD
          **************************************************************/
         function renderFilmstrip() {
             const container = document.getElementById('batchFilmstrip');
@@ -1402,29 +1315,18 @@
             document.getElementById('queueTotalLabel').textContent = state.queue.length;
             document.getElementById('batchCountBadge').textContent = state.queue.length;
 
-            [0, 1, 2].forEach(idx => {
-                const btn = document.getElementById(`quickScene${idx}`);
-                if (btn) {
-                    if (state.activeQueueIndex === idx) {
-                        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium transition-all bg-[#E87A24] text-white';
-                    } else {
-                        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white';
-                    }
-                }
-            });
-
             state.queue.forEach((item, index) => {
                 const isSelected = index === state.activeQueueIndex;
                 const card = document.createElement('div');
-                card.className = `relative group shrink-0 w-28 h-16 rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${
-                    isSelected ? 'border-[#E87A24] scale-[1.03] shadow-lg shadow-[#E87A24]/30' : 'border-white/15 opacity-75 hover:opacity-100'
+                card.className = `relative group shrink-0 w-24 h-14 rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${
+                    isSelected ? 'border-[#E87A24] scale-[1.02] shadow-md shadow-[#E87A24]/30' : 'border-white/15 opacity-70'
                 }`;
                 card.onclick = () => selectSceneByIndex(index);
 
                 const thumbCanvas = document.createElement('canvas');
-                thumbCanvas.width = 160;
-                thumbCanvas.height = 96;
-                thumbCanvas.getContext('2d').drawImage(item.canvas, 0, 0, 160, 96);
+                thumbCanvas.width = 140;
+                thumbCanvas.height = 84;
+                thumbCanvas.getContext('2d').drawImage(item.canvas, 0, 0, 140, 84);
 
                 const img = document.createElement('img');
                 img.src = thumbCanvas.toDataURL('image/jpeg', 0.7);
@@ -1432,15 +1334,14 @@
                 card.appendChild(img);
 
                 const caption = document.createElement('div');
-                caption.className = 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-1.5 py-0.5 text-[10px] text-white truncate';
+                caption.className = 'absolute inset-x-0 bottom-0 bg-black/75 px-1 py-0.5 text-[9px] text-white truncate';
                 caption.textContent = `${index + 1}. ${item.title}`;
                 card.appendChild(caption);
 
                 if (state.queue.length > 1) {
                     const delBtn = document.createElement('button');
-                    delBtn.className = 'absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600/90 text-white text-[10px] hidden group-hover:flex items-center justify-center hover:bg-rose-500';
+                    delBtn.className = 'absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] flex items-center justify-center';
                     delBtn.innerHTML = '✕';
-                    delBtn.title = 'ลบออกจากคิว';
                     delBtn.onclick = (e) => {
                         e.stopPropagation();
                         state.queue.splice(index, 1);
@@ -1464,33 +1365,14 @@
             renderMainCanvas();
         }
 
-        // Handle Custom Logo Upload (e.g. 1000008252.jpg)
-        document.getElementById('logoUploadInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const objectUrl = URL.createObjectURL(file);
-            const img = new Image();
-            img.onload = () => {
-                const c = document.createElement('canvas');
-                c.width = img.naturalWidth || img.width;
-                c.height = img.naturalHeight || img.height;
-                c.getContext('2d').drawImage(img, 0, 0);
-
-                state.rawLogoCanvas = c;
-                URL.revokeObjectURL(objectUrl);
-
-                processLogoChromaKey();
-                renderMainCanvas();
-                showToast('อัปโหลดโลโก้สำเร็จ', `นำเข้า ${file.name} และตัดพื้นหลังขาวเรียบร้อย`);
-            };
-            img.src = objectUrl;
-        });
-
-        // Handle Target Photo(s) Upload
         function handleTargetFilesUpload(fileList) {
             const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
             if (!files.length) return;
+
+            // Remove default mock scenes automatically the first time real photos are uploaded
+            if (state.queue.length === 3 && state.queue[0].id === 'scene-1') {
+                state.queue = [];
+            }
 
             let loadedCount = 0;
             files.forEach(file => {
@@ -1516,7 +1398,7 @@
                         state.activeQueueIndex = state.queue.length - 1;
                         renderFilmstrip();
                         renderMainCanvas();
-                        showToast('เพิ่มรูปภาพเข้าคิวสำเร็จ', `นำเข้ารูปหน้างานจำนวน ${files.length} รูป`);
+                        showToast('เพิ่มรูปหน้างานสำเร็จ', `นำเข้ารูปภาพ ${files.length} รูปเรียบร้อย`);
                     }
                 };
                 img.src = objectUrl;
@@ -1528,7 +1410,6 @@
             e.target.value = '';
         });
 
-        // Drag & Drop Files onto Viewport
         const dropZone = document.getElementById('canvasDropZone');
         const dropOverlay = document.getElementById('dropZoneOverlay');
 
@@ -1537,13 +1418,11 @@
             dropOverlay.classList.remove('hidden');
             dropOverlay.classList.add('flex');
         });
-
         dropZone.addEventListener('dragleave', (e) => {
             e.preventDefault();
             dropOverlay.classList.add('hidden');
             dropOverlay.classList.remove('flex');
         });
-
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropOverlay.classList.add('hidden');
@@ -1554,7 +1433,7 @@
         });
 
         /**************************************************************
-         * 8. HIGH-PERFORMANCE EXPORT PIPELINE (Zero Memory Leak)
+         * 8. EXPORT PIPELINE
          **************************************************************/
         function getExportConfig() {
             const raw = document.getElementById('exportFormat').value.split('|');
@@ -1569,9 +1448,10 @@
             if (!activeItem) return;
 
             const { mime, quality, ext } = getExportConfig();
-            renderMainCanvas();
+            const exportCanvas = document.createElement('canvas');
+            renderWatermarkOntoCanvas(exportCanvas, activeItem.canvas, false);
 
-            previewCanvas.toBlob((blob) => {
+            exportCanvas.toBlob((blob) => {
                 if (!blob) return;
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1583,7 +1463,7 @@
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-                showToast('ดาวน์โหลดภาพสำเร็จ', `บันทึกไฟล์ PHUWASIN_${cleanName}.${ext} (${activeItem.width}×${activeItem.height}px)`);
+                showToast('บันทึกภาพสำเร็จ', `ดาวน์โหลด PHUWASIN_${cleanName}.${ext}`);
             }, mime, quality);
         }
 
@@ -1592,11 +1472,11 @@
             const { mime, quality, ext } = getExportConfig();
             const reusableCanvas = document.createElement('canvas');
 
-            showToast('กำลังประมวลผลชุดใหญ่...', `กำลังเรนเดอร์และดาวน์โหลดทั้ง ${state.queue.length} รูปตามคิว`);
+            showToast('กำลังประมวลผล...', `กำลังดาวน์โหลดทั้ง ${state.queue.length} รูป`);
 
             for (let i = 0; i < state.queue.length; i++) {
                 const item = state.queue[i];
-                renderWatermarkOntoCanvas(reusableCanvas, item.canvas);
+                renderWatermarkOntoCanvas(reusableCanvas, item.canvas, false);
 
                 await new Promise((resolve) => {
                     reusableCanvas.toBlob((blob) => {
@@ -1605,7 +1485,7 @@
                             const a = document.createElement('a');
                             const cleanName = item.title.replace(/\.[^/.]+$/, '').replace(/\s+/g, '_');
                             a.href = url;
-                            a.download = `PHUWASIN_BATCH_${i + 1}_${cleanName}.${ext}`;
+                            a.download = `PHUWASIN_${i + 1}_${cleanName}.${ext}`;
                             document.body.appendChild(a);
                             a.click();
                             document.body.removeChild(a);
@@ -1616,33 +1496,26 @@
                 });
             }
 
-            showToast('ดาวน์โหลดครบทุกภาพแล้ว!', `ส่งออกรูปภาพจำนวน ${state.queue.length} ไฟล์เสร็จสมบูรณ์`);
+            showToast('ดาวน์โหลดครบแล้ว!', `ส่งออกรูปภาพ ${state.queue.length} ไฟล์เรียบร้อย`);
         }
 
-        /**************************************************************
-         * TOAST HELPER & INITIALIZATION
-         **************************************************************/
         let toastTimer = null;
         function showToast(title, desc) {
             const box = document.getElementById('toastBox');
             document.getElementById('toastTitle').textContent = title;
             document.getElementById('toastDesc').textContent = desc;
 
-            box.classList.remove('translate-y-20', 'opacity-0');
+            box.classList.remove('translate-y-24', 'opacity-0');
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => {
-                box.classList.add('translate-y-20', 'opacity-0');
-            }, 3400);
+                box.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
         }
 
         window.onload = async function () {
-            // 1. Load 3 High-Res Test Scenes into Batch Queue first
             state.queue = generateTestScenes();
             state.activeQueueIndex = 0;
             renderFilmstrip();
-
-            // 2. Automatically look for './logo.jpg' or './1000008252.jpg' in the same folder
-            //    (Falls back cleanly to procedural 3D logo if not found or on local file://)
             await loadDefaultOrExternalLogo();
         };
     </script>
